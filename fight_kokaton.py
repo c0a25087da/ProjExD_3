@@ -102,10 +102,11 @@ class Beam:
         angle = math.degrees(math.atan2(-self.vy, self.vx))
         self.img = pg.transform.rotozoom(pg.image.load("fig/beam.png"), angle, 1.0)
         self.rct = self.img.get_rect()
-        
+        self.rct.centerx = bird.rct.centerx + bird.rct.width * self.vx / 5
+        self.rct.centery = bird.rct.centery + bird.rct.height * self.vy / 5
         self.rct.centery = bird.rct.centery  # ビームの中心縦座標 = こうかとんの中心縦座標
         self.rct.left = bird.rct.right  # ビームの左座標 = こうかとんの右座標
-        self.vx, self.vy = +5, 0
+        # self.vx, self.vy = +5, 0
 
     def update(self, screen: pg.Surface):
         """
