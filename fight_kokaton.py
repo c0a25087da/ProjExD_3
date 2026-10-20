@@ -146,6 +146,9 @@ class Score:
     打ち落とした爆弾の数を表示するクラス
     """
     def __init__(self):
+        """
+        スコアを表示させる
+        """
         self.fonto = pg.font.Font(None, 50)
         self.color = (0, 0, 255)
         self.value = 0
