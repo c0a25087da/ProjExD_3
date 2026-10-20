@@ -142,7 +142,9 @@ class Bomb:
         
         
 class Score:
-    """打ち落とした爆弾の数を表示するクラス"""
+    """
+    打ち落とした爆弾の数を表示するクラス
+    """
     def __init__(self):
         self.fonto = pg.font.Font(None, 50)
         self.color = (0, 0, 255)
@@ -154,6 +156,24 @@ class Score:
 
     def update(self, screen: pg.Surface):
         self.img = self.fonto.render(f"Score: {self.value}", 0, self.color)
+        screen.blit(self.img, self.rct)
+
+
+class Explosion:
+    """
+    爆発エフェクトクラス
+    """
+    def __init__(self, bomb: Bomb, life: int):
+        img = pg.image.load("fig/explosion.gif")
+        self.imgs = [img, pg.transform.flip(img, True, True)]
+        self.img = self.imgs[0]
+        self.rct = self.img.get_rect()
+        self.rct.center = bomb.rct.center
+        self.life = life
+
+    def update(self, screen: pg.Surface):
+        self.life -= 1
+        self.img = self.imgs[self.life // 10 % 2]
         screen.blit(self.img, self.rct)
 
 
@@ -169,6 +189,7 @@ def main():
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     #beam = None  # ゲーム初期化時にはビームは存在しない
     beams = []
+    explosions = []
     score = Score()
     clock = pg.time.Clock()
     tmr = 0
@@ -200,9 +221,13 @@ def main():
                         bombs[i] = None
                         bird.change_img(6, screen)  # よろこびエフェクト
                         score.value += 1
+                        explosions.append(Explosion(bomb, 50))
+
                         pg.display.update()                    
         bombs = [bomb for bomb in bombs if bomb is not None]  # Noneを取り除く
         beams = [beam for beam in beams if beam is not None and check_bound(beam.rct) == (True, True)]
+        explosions = [exp for exp in explosions if exp.life > 0]
+
 
 
         key_lst = pg.key.get_pressed()
@@ -211,6 +236,8 @@ def main():
             beam.update(screen)  
         for bomb in bombs: 
             bomb.update(screen)
+        for exp in explosions:
+            exp.update(screen)
             
         score.update(screen)
         
